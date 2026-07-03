@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "vercel dev"
   },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.7.0"
+  },
   "engines": {
     "node": "24.x"
   }
