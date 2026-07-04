@@ -21,7 +21,55 @@ jobs:
       - name: Dump Luma payload to file
         run: |
           mkdir -p data
-          echo '${{ toJson(github.event.client_payload) }}' > data/latest_event.json
+          python - <<'PY'
+import json, os
+from pathlib import Path
+payload = json.loads(os.environ['LUMA_PAYLOAD'])
+
+# Normalize Luma event payload into a stable meetup object
+meetup = {
+    "id": payload.get("data", {}).get("id") or payload.get("id"),
+    "name": payload.get("data", {}).get("name"),
+    "description": payload.get("data", {}).get("description"),
+    "start_at": payload.get("data", {}).get("start_at"),
+    "end_at": payload.get("data", {}).get("end_at"),
+    "timezone": payload.get("data", {}).get("timezone"),
+    "url": payload.get("data", {}).get("url"),
+    "location": payload.get("data", {}).get("geo_address_json", {}).get("full_address"),
+    "coordinates": {
+        "latitude": payload.get("data", {}).get("coordinate", {}).get("latitude"),
+        "longitude": payload.get("data", {}).get("coordinate", {}).get("longitude"),
+    },
+    "registration_open": payload.get("data", {}).get("registration_open"),
+    "visibility": payload.get("data", {}).get("visibility"),
+    "platform": payload.get("data", {}).get("platform"),
+    "source": "luma",
+    "updated_at": payload.get("data", {}).get("created_at") or payload.get("created_at"),
+}
+
+# Update the meetup list, deduplicating by id
+meetups_path = Path('data/meetups.json')
+meetups = []
+if meetups_path.exists():
+    try:
+        meetups = json.loads(meetups_path.read_text())
+    except Exception:
+        meetups = []
+
+existing = [m for m in meetups if m.get('id') == meetup['id']]
+if existing:
+    for i, m in enumerate(meetups):
+        if m.get('id') == meetup['id']:
+            meetups[i] = meetup
+            break
+else:
+    meetups.append(meetup)
+
+meetups_path.write_text(json.dumps(meetups, indent=2, ensure_ascii=False) + '\n')
+Path('data/latest_event.json').write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n')
+PY
+        env:
+          LUMA_PAYLOAD: ${{ toJson(github.event.client_payload) }}
 
       - name: Commit and push
         env:
