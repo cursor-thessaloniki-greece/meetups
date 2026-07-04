@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 export const config = {
   api: {
@@ -18,6 +18,75 @@ function getRawBody(req: any): Promise<Buffer> {
 function timingSafeEqual(a: Buffer, b: Buffer) {
   if (a.length !== b.length) return false;
   return crypto.timingSafeEqual(a, b);
+}
+
+function parseRoutingRules(value: string) {
+  if (!value) return [] as Array<{ keyword: string; repo: string }>;
+
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed && typeof parsed === 'object') {
+      return Object.entries(parsed).map(([keyword, repo]) => ({
+        keyword: String(keyword).trim().toLowerCase(),
+        repo: String(repo).trim(),
+      })).filter(({ keyword, repo }) => keyword && repo);
+    }
+  } catch {
+    // fall back to comma-separated key=value rules
+  }
+
+  return value
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const [keyword, repo] = entry.split('=');
+      return {
+        keyword: keyword?.trim().toLowerCase(),
+        repo: repo?.trim(),
+      };
+    })
+    .filter(({ keyword, repo }) => keyword && repo);
+}
+
+function getEventText(payload: any) {
+  const data = payload?.data || payload || {};
+  const event = data?.event || {};
+  return [
+    data?.name,
+    data?.title,
+    data?.description,
+    data?.category,
+    data?.event_type,
+    event?.name,
+    event?.title,
+    event?.description,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+
+function resolveTargetRepository(payload: any, currentRepo: string) {
+  const owner = currentRepo.split('/')[0];
+  const rules = parseRoutingRules(process.env.LUMA_ROUTING_RULES || '');
+  const text = getEventText(payload);
+
+  const matches = rules
+    .map((rule) => ({
+      ...rule,
+      score: text.includes(rule.keyword) ? rule.keyword.length : 0,
+    }))
+    .filter((rule) => rule.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (matches.length > 0) {
+    const target = matches[0].repo;
+    return target.includes('/') ? target : `${owner}/${target}`;
+  }
+
+  const fallback = process.env.LUMA_DEFAULT_REPOSITORY || currentRepo;
+  return fallback.includes('/') ? fallback : `${owner}/${fallback}`;
 }
 
 export default async function handler(req: any, res: any) {
@@ -82,9 +151,17 @@ export default async function handler(req: any, res: any) {
       payload = { raw: payloadText };
     }
 
-    const [owner, repo] = repoEnv.split('/');
+    const [owner] = repoEnv.split('/');
+    const targetRepo = resolveTargetRepository(payload, repoEnv);
+    const routingPayload = {
+      ...payload,
+      _routing: {
+        source_repo: repoEnv,
+        target_repo: targetRepo,
+      },
+    };
 
-    const ghResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
+    const ghResp = await fetch(`https://api.github.com/repos/${targetRepo}/dispatches`, {
       method: 'POST',
       headers: {
         Authorization: `token ${token}`,
@@ -92,7 +169,7 @@ export default async function handler(req: any, res: any) {
         'Content-Type': 'application/json',
         'User-Agent': 'luma-webhook-middleware',
       },
-      body: JSON.stringify({ event_type: 'luma_webhook', client_payload: payload }),
+      body: JSON.stringify({ event_type: 'luma_webhook', client_payload: routingPayload }),
     });
 
     if (!ghResp.ok) {
