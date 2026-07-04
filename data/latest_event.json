@@ -1,4 +1,52 @@
 {
-  "event": "local_test",
-  "time": 1783126788849
+  "data": {
+    "api_id": "evt-3mytz9FRy2JOJMY",
+    "calendar_api_id": "cal-VIcYHQtlSkkNPVY",
+    "calendar_id": "cal-VIcYHQtlSkkNPVY",
+    "coordinate": {
+      "latitude": 40.5893063,
+      "longitude": 22.954665
+    },
+    "cover_url": "https://images.lumacdn.com/uploads/dg/5bb8bd0b-6dcd-4077-b2bc-fefdae850ee4.png",
+    "created_at": "2026-06-09T00:08:23.829Z",
+    "description": "Were exploring the launch of a local community around AI-native software development in Thessaloniki.nDevelopers, founders, product managers, engineering leaders, and makers across the city are already experimenting with AI tools, agentic workflows, and new ways of building software. Most of that experimentation is happening in isolation.nThe goal of this meetup is simple: Bring people together and decide what this community should become.nDuring the session well view a hands-on Cursor DEMO and discuss:\nHow AI is changing software development\nHow local teams are adopting tools like Cursor\nWhat formats would be most valuable for ThessalonikiWorkshops, talks, builder nights, hackathons, demo days, and other ideas\nHow we can build a sustainable local community together\nThis is not a traditional meetup with a fixed agenda and speakers.\nInstead, well use the session to gather ideas, identify community needs, and shape the roadmap for future events.nWhether youre already using Cursor daily or simply curious about AI-assisted development, youre welcome to join the discussion.nWho should attend?nSoftware EngineersnEngineering ManagersnCTOsnFoundersnProduct ManagersnStudents and Makers interested in AI-native developmentnOutcomenBy the end of the meetup, well have a clear understanding of what the local community wants to see next and launch our first community initiatives for the summer and beyond.\nLets build the Cursor Thessaloniki community together.,
+    description_md: Were exploring the launch of a local community around AI-native software development in Thessaloniki.\n\nDevelopers, founders, product managers, engineering leaders, and makers across the city are already experimenting with AI tools, agentic workflows, and new ways of building software. Most of that experimentation is happening in isolation.\n\nThe **goal of this meetup** is simple: **Bring people together** and decide what this community should become.\n\nDuring the session well view a hands-on **Cursor DEMO** and discuss:nn* How AI is changing software developmentn* How local teams are adopting tools like Cursorn* What formats would be most **valuable for Thessaloniki**n LUMA_README.md api data package-lock.json package.json test workers Workshops, talks, builder nights, hackathons, demo days, and other ideasn* How we can build a sustainable local community togethernnThis is not a traditional meetup with a fixed agenda and speakers.nnInstead, well use the session to gather ideas, identify community needs, and shape the roadmap for future events.\n\nWhether youre already using Cursor daily or simply curious about AI-assisted development, youre welcome to join the discussion.\n\nWho should attend?\n\n*   Software Engineers\n*   Engineering Managers\n*   CTOs\n*   Founders\n*   Product Managers\n*   Students and Makers interested in AI-native development\n\nOutcome\n\nBy the end of the meetup, well have a clear understanding of what the local community wants to see next and launch our first community initiatives for the summer and beyond.nnLets build the Cursor Thessaloniki community together.",
+    "duration_interval": "P0Y0M0DT2H30M0S",
+    "end_at": "2026-06-30T18:30:00.000Z",
+    "feedback_email": {
+      "delay": "P0Y0M0DT0H0M0S",
+      "enabled": true
+    },
+    "geo_address_json": {
+      "address": "Geekbot",
+      "apple_maps_place_id": null,
+      "city": "Kalamaria",
+      "city_state": "Kalamaria, Greece",
+      "country": "GR",
+      "description": "",
+      "full_address": "Geekbot, Adrianoupoleos 3, Kalamaria 551 33, Greece",
+      "google_maps_place_id": "ChIJz3JR_2M_qBQRLlzdqah0tRA",
+      "region": null
+    },
+    "geo_latitude": "40.5893063",
+    "geo_longitude": "22.954665",
+    "id": "evt-3mytz9FRy2JOJMY",
+    "location_type": "offline",
+    "location_visibility": "public",
+    "meeting_url": null,
+    "name": "Cursor Thessaloniki Community Kickoff",
+    "platform": "luma",
+    "registration_open": false,
+    "registration_questions": [],
+    "start_at": "2026-06-30T16:00:00.000Z",
+    "tags": [],
+    "timezone": "Europe/Athens",
+    "url": "https://luma.com/es0na6q9",
+    "user_api_id": "usr-N4oWVd8oBLL0QkM",
+    "user_id": "usr-N4oWVd8oBLL0QkM",
+    "visibility": "public",
+    "waitlist_status": "enabled",
+    "zoom_meeting_url": null
+  },
+  "type": "event.updated"
 }
